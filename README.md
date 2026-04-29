@@ -1,0 +1,174 @@
+# Visual Sentinel MCP Server
+
+Model Context Protocol server for [Visual Sentinel](https://visualsentinel.com), the six-layer website monitoring platform: uptime, performance, SSL, DNS, visual regression, and content change detection.
+
+Connect Claude Desktop, Claude Code, Cline, Continue, or any MCP-compatible client to your Visual Sentinel account so an AI assistant can list monitors, create them, fetch incident history, run free DNS / SSL / speed checks, and acknowledge alerts on your behalf.
+
+* **npm:** `@visualsentinel/mcp-server`
+* **OpenAPI spec:** https://github.com/VisualSentinel/openapi
+* **Get an API key:** https://visualsentinel.com/settings/api-keys
+* **Hosted API reference:** https://visualsentinel.com/docs
+
+## What you get
+
+16 tools spanning the public Visual Sentinel API:
+
+**Public tools (no API key required)**
+
+| Tool | Endpoint | Purpose |
+|---|---|---|
+| `vs_health` | `GET /api/health` | Service health probe |
+| `vs_dns_check` | `GET /api/tools/dns-check` | Resolve A / AAAA / MX / NS / TXT / CNAME / SOA records |
+| `vs_ssl_check` | `GET /api/tools/ssl-check` | Inspect TLS certificate (issuer, validity, SAN list, chain) |
+| `vs_speed_test` | `GET /api/tools/speed-test` | One-shot performance check (TTFB, total load, transfer size) |
+| `vs_website_check` | `GET /api/tools/website-check` | Quick HTTP health check |
+
+**Authenticated tools (require `VS_API_KEY`)**
+
+| Tool | Endpoint | Purpose |
+|---|---|---|
+| `vs_monitors_list` | `GET /api/monitors` | List monitors with optional status / type filters |
+| `vs_monitors_get` | `GET /api/monitors/{id}` | Fetch a single monitor with current status |
+| `vs_monitors_create` | `POST /api/monitors` | Create a new monitor |
+| `vs_monitors_check_now` | `POST /api/monitors/{id}/check` | Trigger an immediate check |
+| `vs_monitors_uptime` | `GET /api/monitors/{id}/uptime` | Uptime percentage over 24h / 7d / 30d / 90d / 365d |
+| `vs_incidents_list` | `GET /api/incidents` | List incidents, filterable by status or monitor |
+| `vs_incidents_get` | `GET /api/incidents/{id}` | Fetch an incident with full check history |
+| `vs_alerts_list` | `GET /api/alerts` | List alerts by status |
+| `vs_alerts_acknowledge` | `POST /api/alerts/{id}/acknowledge` | Acknowledge an alert |
+| `vs_status_pages_list` | `GET /api/status-pages` | List your public status pages |
+| `vs_servers_list` | `GET /api/servers` | List registered origin servers |
+
+## Installation
+
+### Claude Desktop
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+
+```json
+{
+  "mcpServers": {
+    "visualsentinel": {
+      "command": "npx",
+      "args": ["-y", "@visualsentinel/mcp-server"],
+      "env": {
+        "VS_API_KEY": "vs_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop. The 16 tools appear under the tools menu.
+
+### Claude Code (CLI)
+
+```bash
+claude mcp add visualsentinel \
+  -- npx -y @visualsentinel/mcp-server
+```
+
+Then export `VS_API_KEY` in the shell where Claude Code runs.
+
+### Cline (VS Code extension)
+
+In Cline's MCP settings, add:
+
+```json
+{
+  "visualsentinel": {
+    "command": "npx",
+    "args": ["-y", "@visualsentinel/mcp-server"],
+    "env": { "VS_API_KEY": "vs_live_..." }
+  }
+}
+```
+
+### Continue
+
+In `~/.continue/config.json`:
+
+```json
+{
+  "mcpServers": [
+    {
+      "name": "visualsentinel",
+      "command": "npx",
+      "args": ["-y", "@visualsentinel/mcp-server"],
+      "env": { "VS_API_KEY": "vs_live_..." }
+    }
+  ]
+}
+```
+
+### Generic MCP client (stdio)
+
+```bash
+VS_API_KEY=vs_live_xxx npx -y @visualsentinel/mcp-server
+```
+
+The server speaks JSON-RPC over stdio per the MCP specification (`2025-06-18`).
+
+## Configuration
+
+Two environment variables, both optional except in the noted cases:
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `VS_API_KEY` | (none) | Required for the 11 authenticated tools. Public tools work without it. Generate at https://visualsentinel.com/settings/api-keys. |
+| `VS_API_BASE` | `https://visualsentinel.com` | Override only for testing against a local development instance. |
+
+If a tool that needs auth is called without `VS_API_KEY`, the server returns a clear error rather than silently failing.
+
+`VISUALSENTINEL_API_KEY` is accepted as an alias for `VS_API_KEY` for clients that prefer the longer name.
+
+## Usage examples
+
+After installation, ask the AI assistant things like:
+
+* "What's the SSL certificate situation on visualsentinel.com? When does it expire?"
+* "List my Visual Sentinel monitors that are currently down."
+* "Add a new HTTPS monitor for https://shop.example.com checking every minute."
+* "Show me incidents from the last 24 hours and acknowledge the ones for monitor-id `clm123`."
+* "What's the uptime percentage for my landing page over the last 30 days?"
+* "Run a speed test on https://example.com/checkout."
+
+The assistant chooses the appropriate tool, fills in arguments from the conversation, and shows the JSON response.
+
+## Security notes
+
+* Your API key never leaves the machine running this MCP server. Requests go directly to `https://visualsentinel.com` over HTTPS.
+* Public tools (`vs_health`, `vs_dns_check`, `vs_ssl_check`, `vs_speed_test`, `vs_website_check`) work without an API key, but their results are visible to anyone who can read your conversation logs. Treat them like any other shell-out.
+* Revoke a leaked API key immediately at https://visualsentinel.com/settings/api-keys. Revocation takes effect within seconds.
+* Tools that mutate state (`vs_monitors_create`, `vs_monitors_check_now`, `vs_alerts_acknowledge`) inherit your API key's role-based permissions. A read-only key cannot create monitors.
+
+## Development
+
+```bash
+git clone https://github.com/VisualSentinel/mcp-server.git
+cd mcp-server
+npm install
+npm run build      # tsup, output to dist/
+npm run lint       # tsc --noEmit
+npm run dev        # tsup --watch
+```
+
+To smoke-test locally against the production API:
+
+```bash
+VS_API_KEY=vs_live_... node dist/index.js
+```
+
+The server speaks JSON-RPC on stdin / stdout. Pipe in a `tools/list` request to see the registered tools.
+
+## Versioning
+
+Semantic versioning. Breaking changes to tool names or required arguments get a major bump. Adding new tools or new optional arguments is a minor or patch.
+
+The server's tool surface tracks the public Visual Sentinel API spec at https://github.com/VisualSentinel/openapi. When the upstream API gains a useful endpoint, this repository typically catches up within a release.
+
+## License
+
+MIT. See [`LICENSE`](./LICENSE).
+
+The Visual Sentinel API service itself is governed by https://visualsentinel.com/terms.

@@ -1,0 +1,63 @@
+{
+  "name": "@visualsentinel/mcp-server",
+  "version": "0.1.0",
+  "description": "Model Context Protocol server for Visual Sentinel: six-layer website monitoring (uptime, performance, SSL, DNS, visual regression, content change) accessible from Claude Desktop, Claude Code, Cline, Continue, and any MCP-compatible client.",
+  "type": "module",
+  "bin": {
+    "visualsentinel-mcp-server": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node dist/index.js",
+    "lint": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "prepublishOnly": "npm run lint && npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "visual-sentinel",
+    "website-monitoring",
+    "uptime",
+    "ssl",
+    "dns",
+    "visual-regression",
+    "claude",
+    "claude-desktop",
+    "cline"
+  ],
+  "author": "Visual Sentinel <support@visualsentinel.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/VisualSentinel/mcp-server#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VisualSentinel/mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/VisualSentinel/mcp-server/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
