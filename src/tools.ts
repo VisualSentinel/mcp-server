@@ -259,24 +259,94 @@ export const TOOLS: ToolDefinition[] = [
   {
     name: 'vs_monitors_uptime',
     description:
-      'Fetch the uptime percentage and outage breakdown for a monitor over a window (default last 30 days).',
+      'Fetch the uptime percentage and time-series breakdown for a monitor. Use `window` for a preset window (24h, 7d, 30d, 90d, 365d; default 30d), or supply both `from` and `to` (ISO 8601) for a custom date range.',
     inputSchema: {
       type: 'object',
       properties: {
         id: { ...STR, description: 'Monitor id.' },
         window: {
           ...STR,
-          description: 'Window: 24h, 7d, 30d, 90d, 365d. Default 30d.',
+          description: 'Preset window: 1h, 6h, 24h, 7d, 30d, 90d, 365d. Default 30d. Ignored when from+to are supplied.',
+        },
+        from: {
+          ...STR,
+          description: 'ISO 8601 start of a custom range (e.g. 2026-01-01T00:00:00Z). Must be supplied with `to`.',
+        },
+        to: {
+          ...STR,
+          description: 'ISO 8601 end of a custom range. Must be supplied with `from`.',
         },
       },
       required: ['id'],
       additionalProperties: false,
     },
     requiresAuth: true,
-    handler: async (args, client) =>
-      client.request('GET', `/api/monitors/${encodeURIComponent(requireString(args, 'id'))}/uptime`, {
-        query: { window: pickString(args, 'window') },
-      }),
+    handler: async (args, client) => {
+      const from = pickString(args, 'from');
+      const to = pickString(args, 'to');
+      const query = (from && to)
+        ? { from, to }
+        : { period: pickString(args, 'window') ?? '30d' };
+      return client.request(
+        'GET',
+        `/api/monitors/${encodeURIComponent(requireString(args, 'id'))}/uptime`,
+        { query },
+      );
+    },
+  },
+
+  {
+    name: 'vs_monitors_metrics_bulk',
+    description:
+      'Fetch uptime or response-time metrics for up to 100 monitors in a single request. Use `window` for a preset window (1h, 6h, 24h, 7d, 30d, 90d, 365d; default 30d), or supply both `from` and `to` (ISO 8601) for a custom date range. Returns a `monitors` object keyed by monitor id.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        monitorIds: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'List of monitor IDs to fetch metrics for (max 100).',
+        },
+        metric: {
+          ...STR,
+          description: 'Metric to return: "uptime" or "response-time".',
+        },
+        window: {
+          ...STR,
+          description: 'Preset window: 1h, 6h, 24h, 7d, 30d, 90d, 365d. Default 30d. Ignored when from+to are supplied.',
+        },
+        from: {
+          ...STR,
+          description: 'ISO 8601 start of a custom range (e.g. 2026-01-01T00:00:00Z). Must be supplied with `to`.',
+        },
+        to: {
+          ...STR,
+          description: 'ISO 8601 end of a custom range. Must be supplied with `from`.',
+        },
+      },
+      required: ['monitorIds', 'metric'],
+      additionalProperties: false,
+    },
+    requiresAuth: true,
+    handler: async (args, client) => {
+      const monitorIds = args['monitorIds'];
+      if (!Array.isArray(monitorIds) || monitorIds.length === 0) {
+        throw new Error('Argument "monitorIds" must be a non-empty array.');
+      }
+      const from = pickString(args, 'from');
+      const to = pickString(args, 'to');
+      const body: Record<string, unknown> = {
+        monitorIds,
+        metric: requireString(args, 'metric'),
+      };
+      if (from && to) {
+        body['from'] = from;
+        body['to'] = to;
+      } else {
+        body['period'] = pickString(args, 'window') ?? '30d';
+      }
+      return client.request('POST', '/api/monitors/metrics', { body });
+    },
   },
 
   {

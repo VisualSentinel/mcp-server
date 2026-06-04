@@ -2,6 +2,22 @@
 
 All notable changes to `@visualsentinel/mcp-server`. Format follows [Keep a Changelog](https://keepachangelog.com/) and the package uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-06-04
+
+### Added
+
+* New tool `vs_monitors_metrics_bulk`: fetches uptime or response-time metrics for up to 100 monitors in a single API call. Accepts `monitorIds` (array), `metric` (`uptime` | `response-time`), and either a preset `window` or custom `from`+`to` ISO 8601 range. POSTs to `POST /api/monitors/metrics`.
+* `vs_monitors_uptime`: added `from` and `to` input properties for custom date ranges. When both are supplied the handler sends them as query params instead of `period`, allowing arbitrary historical windows.
+
+### Changed
+
+* `vs_monitors_uptime`: input schema now includes `from`, `to`, and expands `window` description to list `1h | 6h | 24h | 7d | 30d | 90d | 365d`. Handler now correctly maps `window` → `period` query param (previously `window` was sent as-is and silently ignored by the API). Default period remains `30d`.
+* `tsup.config.ts`: added `src/tools.ts` and `src/api-client.ts` as explicit entry points so they emit separate dist files importable by tests without bundling index.ts.
+
+### Fixed
+
+* `vs_monitors_uptime` handler was sending `{ window: ... }` in the query string instead of `{ period: ... }`. The Visual Sentinel API only accepts `period`; the old behaviour silently fell back to the server default.
+
 ## [0.1.0] - 2026-04-29
 
 Initial public release.
