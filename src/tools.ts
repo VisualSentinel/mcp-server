@@ -259,14 +259,14 @@ export const TOOLS: ToolDefinition[] = [
   {
     name: 'vs_monitors_uptime',
     description:
-      'Fetch the uptime percentage and time-series breakdown for a monitor. Use `window` for a preset window (24h, 7d, 30d, 90d, 365d; default 30d), or supply both `from` and `to` (ISO 8601) for a custom date range.',
+      'Fetch the uptime percentage and time-series breakdown for a monitor. Use `window` for a preset window (24h, 7d, 30d, 90d, 365d; default 30d), supply both `from` and `to` (ISO 8601) for a custom date range, or set `all: true` for the full available history.',
     inputSchema: {
       type: 'object',
       properties: {
         id: { ...STR, description: 'Monitor id.' },
         window: {
           ...STR,
-          description: 'Preset window: 1h, 6h, 24h, 7d, 30d, 90d, 365d. Default 30d. Ignored when from+to are supplied.',
+          description: 'Preset window: 1h, 6h, 24h, 7d, 30d, 90d, 365d. Default 30d. Ignored when from+to or all are supplied.',
         },
         from: {
           ...STR,
@@ -276,6 +276,10 @@ export const TOOLS: ToolDefinition[] = [
           ...STR,
           description: 'ISO 8601 end of a custom range. Must be supplied with `from`.',
         },
+        all: {
+          type: 'boolean',
+          description: 'Return the full available history from the earliest stored data. Takes precedence over from/to and window.',
+        },
       },
       required: ['id'],
       additionalProperties: false,
@@ -284,9 +288,12 @@ export const TOOLS: ToolDefinition[] = [
     handler: async (args, client) => {
       const from = pickString(args, 'from');
       const to = pickString(args, 'to');
-      const query = (from && to)
-        ? { from, to }
-        : { period: pickString(args, 'window') ?? '30d' };
+      // Precedence mirrors the API: all > from/to > window/period.
+      const query = args['all'] === true
+        ? { all: true }
+        : (from && to)
+          ? { from, to }
+          : { period: pickString(args, 'window') ?? '30d' };
       return client.request(
         'GET',
         `/api/monitors/${encodeURIComponent(requireString(args, 'id'))}/uptime`,
@@ -298,7 +305,7 @@ export const TOOLS: ToolDefinition[] = [
   {
     name: 'vs_monitors_metrics_bulk',
     description:
-      'Fetch uptime or response-time metrics for up to 100 monitors in a single request. Use `window` for a preset window (1h, 6h, 24h, 7d, 30d, 90d, 365d; default 30d), or supply both `from` and `to` (ISO 8601) for a custom date range. Returns a `monitors` object keyed by monitor id.',
+      'Fetch uptime or response-time metrics for up to 100 monitors in a single request. Use `window` for a preset window (1h, 6h, 24h, 7d, 30d, 90d, 365d; default 30d), supply both `from` and `to` (ISO 8601) for a custom date range, or set `all: true` for the full available history. Returns a `monitors` object keyed by monitor id.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -313,7 +320,7 @@ export const TOOLS: ToolDefinition[] = [
         },
         window: {
           ...STR,
-          description: 'Preset window: 1h, 6h, 24h, 7d, 30d, 90d, 365d. Default 30d. Ignored when from+to are supplied.',
+          description: 'Preset window: 1h, 6h, 24h, 7d, 30d, 90d, 365d. Default 30d. Ignored when from+to or all are supplied.',
         },
         from: {
           ...STR,
@@ -322,6 +329,10 @@ export const TOOLS: ToolDefinition[] = [
         to: {
           ...STR,
           description: 'ISO 8601 end of a custom range. Must be supplied with `from`.',
+        },
+        all: {
+          type: 'boolean',
+          description: 'Return the full available history from the earliest stored data. Takes precedence over from/to and window.',
         },
       },
       required: ['monitorIds', 'metric'],
@@ -339,7 +350,10 @@ export const TOOLS: ToolDefinition[] = [
         monitorIds,
         metric: requireString(args, 'metric'),
       };
-      if (from && to) {
+      // Precedence mirrors the API: all > from/to > window/period.
+      if (args['all'] === true) {
+        body['all'] = true;
+      } else if (from && to) {
         body['from'] = from;
         body['to'] = to;
       } else {

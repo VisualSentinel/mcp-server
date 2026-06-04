@@ -8,6 +8,7 @@ All notable changes to `@visualsentinel/mcp-server`. Format follows [Keep a Chan
 
 * New tool `vs_monitors_metrics_bulk`: fetches uptime or response-time metrics for up to 100 monitors in a single API call. Accepts `monitorIds` (array), `metric` (`uptime` | `response-time`), and either a preset `window` or custom `from`+`to` ISO 8601 range. POSTs to `POST /api/monitors/metrics`.
 * `vs_monitors_uptime`: added `from` and `to` input properties for custom date ranges. When both are supplied the handler sends them as query params instead of `period`, allowing arbitrary historical windows.
+* `all` (boolean) input on `vs_monitors_uptime` and `vs_monitors_metrics_bulk`: requests the full available history from the earliest stored data. Precedence mirrors the API: `all` > `from`/`to` > `window`/`period`. This makes the documented full-history capability actually reachable through the tools.
 
 ### Changed
 

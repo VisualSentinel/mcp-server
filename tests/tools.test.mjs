@@ -90,6 +90,20 @@ describe('vs_monitors_uptime', () => {
     const { options } = client.calls[0];
     assert.equal(options.query?.period, '30d', 'should default to period=30d');
   });
+
+  it('sends all=true and omits period/from/to when all is set (full history)', async () => {
+    const tool = getTool('vs_monitors_uptime');
+    const client = new MockClient();
+    await tool.handler(
+      { id: 'mon-all', all: true, window: '7d', from: '2026-01-01T00:00:00Z', to: '2026-02-01T00:00:00Z' },
+      client,
+    );
+
+    const { options } = client.calls[0];
+    assert.equal(options.query?.all, true, 'query.all should be true');
+    assert.equal(options.query?.period, undefined, 'period must not be sent when all=true');
+    assert.equal(options.query?.from, undefined, 'from must not be sent when all=true');
+  });
 });
 
 describe('vs_monitors_metrics_bulk', () => {
@@ -146,5 +160,19 @@ describe('vs_monitors_metrics_bulk', () => {
     );
 
     assert.equal(client.calls[0].options.body?.period, '30d');
+  });
+
+  it('sets body.all and omits period/from/to when all is set (full history)', async () => {
+    const tool = getTool('vs_monitors_metrics_bulk');
+    const client = new MockClient();
+    await tool.handler(
+      { monitorIds: ['mon-001'], metric: 'uptime', all: true, window: '7d' },
+      client,
+    );
+
+    const { options } = client.calls[0];
+    assert.equal(options.body?.all, true, 'body.all should be true');
+    assert.equal(options.body?.period, undefined, 'period must not be set when all=true');
+    assert.equal(options.body?.from, undefined, 'from must not be set when all=true');
   });
 });
