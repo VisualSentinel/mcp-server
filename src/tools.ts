@@ -157,7 +157,7 @@ export const TOOLS: ToolDefinition[] = [
       openWorldHint: true,
     },
     description:
-      'Run a one-shot performance check against a URL: TTFB, total load time, transfer size, status code, and redirect chain. No authentication required.',
+      'Run a one-shot Lighthouse lab test on a URL. Returns the performance score (0 to 100) plus Largest Contentful Paint, First Contentful Paint, Cumulative Layout Shift, Time to First Byte, Total Blocking Time and Speed Index (times in milliseconds). No account needed.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -563,7 +563,7 @@ export const TOOLS: ToolDefinition[] = [
       idempotentHint: true,
       openWorldHint: false,
     },
-    description: 'Acknowledge an alert by id. Acknowledgement is recorded with the calling API key\'s user.',
+    description: 'Acknowledge an alert by id. The acknowledgement is recorded against the account that authorised this connection.',
     inputSchema: {
       type: 'object',
       properties: {
