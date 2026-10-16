@@ -223,3 +223,56 @@ describe('tool annotations', () => {
     for (const t of TOOLS) assert.ok(t.name.length <= 64, t.name);
   });
 });
+
+describe('prompts, resources and version', async () => {
+  const { PROMPTS, findPrompt } = await import('../dist/prompts.js');
+  const { RESOURCES, findResource } = await import('../dist/resources.js');
+  const { SERVER_VERSION } = await import('../dist/version.js');
+  const { readFileSync } = await import('node:fs');
+  const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+
+  it('SERVER_VERSION equals package.json version', () => {
+    assert.equal(SERVER_VERSION, pkg.version);
+  });
+
+  it('prompts reference only real tools and need no hidden arguments', () => {
+    const names = new Set(TOOLS.map((t) => t.name));
+    for (const p of PROMPTS) {
+      const args = {};
+      for (const a of p.arguments) args[a.name] = 'example.com';
+      const text = p.build(args);
+      for (const m of text.match(/vs_[a-z_]+/g) ?? []) assert.ok(names.has(m), `${p.name} mentions unknown tool ${m}`);
+      assert.ok(text.length > 200, p.name);
+    }
+    assert.equal(PROMPTS.length, 4);
+  });
+
+  it('required prompt arguments are enforced', () => {
+    assert.throws(() => findPrompt('check_website_health').build({}), /required/);
+  });
+
+  it('public-tool prompts do not call account tools', () => {
+    const text = findPrompt('check_website_health').build({ url: 'https://example.com' });
+    assert.ok(!/vs_monitors|vs_incidents|vs_alerts/.test(text));
+  });
+
+  it('resources read as non-empty markdown and stay inside the fact sheet', () => {
+    assert.equal(RESOURCES.length, 3);
+    for (const r of RESOURCES) {
+      const body = findResource(r.uri).read();
+      assert.ok(body.length > 100, r.uri);
+      assert.ok(!/free plan|free tier|99\.\d|instantly|never miss|guarantee/i.test(body.replace('There is no free plan for new accounts', '')), r.uri);
+    }
+    assert.ok(findResource('visualsentinel://tools').read().includes('vs_ssl_check'));
+  });
+
+  it('account tools return a clear no-key error, not a crash', async () => {
+    const { ApiClient } = await import('../dist/api-client.js');
+    const client = new ApiClient({ apiKey: undefined });
+    delete process.env.VS_API_KEY; delete process.env.VISUALSENTINEL_API_KEY;
+    const c2 = new ApiClient();
+    const tool = TOOLS.find((t) => t.name === 'vs_monitors_list');
+    await assert.rejects(() => tool.handler({}, c2), /Business and Agency/);
+    void client;
+  });
+});
