@@ -86,6 +86,15 @@ This repository is also an installable plugin: `.cursor-plugin/plugin.json` and 
 }
 ```
 
+### Docker
+
+```bash
+docker build -t visualsentinel-mcp-server .
+docker run -i --rm -e VS_API_KEY visualsentinel-mcp-server
+```
+
+The server also ships as a Gemini CLI extension (`gemini-extension.json`).
+
 ### Cline (VS Code extension)
 
 In Cline's MCP settings, add:

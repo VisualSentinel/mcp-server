@@ -1,0 +1,12 @@
+{
+  "name": "visual-sentinel",
+  "version": "0.2.1",
+  "description": "Website monitoring from your AI assistant. Visual Sentinel catches pages that look broken even when the site is up. Five tools work with no account; the account tools need an API key (Business and Agency plans).",
+  "mcpServers": {
+    "visualsentinel": {
+      "command": "npx",
+      "args": ["-y", "@visualsentinel/mcp-server"],
+      "env": { "VS_API_KEY": "${VS_API_KEY}" }
+    }
+  }
+}
