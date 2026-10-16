@@ -56,7 +56,7 @@ export class ApiClient {
     const auth = options.auth ?? true;
     if (auth && !this.hasApiKey()) {
       throw new VsApiError(
-        'Visual Sentinel API key required. Set VS_API_KEY (https://visualsentinel.com/settings/api-keys).',
+        'This tool needs a Visual Sentinel API key, which is available on the Business and Agency plans. Create one at https://visualsentinel.com/settings/api-keys and set it as VS_API_KEY. The DNS, SSL, speed, website-check and health tools work without a key.',
         401,
         null,
       );

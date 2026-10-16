@@ -2,6 +2,19 @@
 
 All notable changes to `@visualsentinel/mcp-server`. Format follows [Keep a Changelog](https://keepachangelog.com/) and the package uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] - 2026-10-16
+
+### Added
+
+* Four MCP prompts: `check_website_health`, `investigate_broken_site`, `pre_launch_checklist`, `triage_open_incidents`.
+* Three read-only MCP resources: `visualsentinel://plans`, `visualsentinel://help`, `visualsentinel://tools`. The server now advertises the `prompts` and `resources` capabilities.
+* LobeHub badge and homepage link in the README (the LobeHub claim route).
+
+### Changed
+
+* Account tools called without an API key now explain that API keys are available on the Business and Agency plans and that the five public tools work without one.
+* `SERVER_VERSION` lives in `src/version.ts`; a test keeps it equal to `package.json`.
+
 ## [0.2.1] - 2026-10-16
 
 ### Fixed

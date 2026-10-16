@@ -1,9 +1,12 @@
 # Visual Sentinel MCP Server
 
+[![MCP Badge](https://lobehub.com/badge/mcp/visualsentinel-mcp-server)](https://lobehub.com/mcp/visualsentinel-mcp-server)
+
 Model Context Protocol server for [Visual Sentinel](https://visualsentinel.com). Visual Sentinel catches pages that look broken even when the site is up. It monitors six layers: uptime, performance, SSL, DNS, visual regression, and content change.
 
 Connect Claude Desktop, Claude Code, Cursor, Cline, Continue, or any MCP-compatible client so an AI assistant can run DNS, SSL and speed checks on any site with no account. With a Visual Sentinel account and an API key (Business and Agency plans) it can also list and create monitors, fetch incident history, and acknowledge alerts on your behalf.
 
+* **Homepage and docs:** https://visualsentinel.com/mcp
 * **npm:** `@visualsentinel/mcp-server`
 * **OpenAPI spec:** https://github.com/VisualSentinel/openapi
 * **API key (Business and Agency plans):** https://visualsentinel.com/settings/api-keys
@@ -39,6 +42,25 @@ Connect Claude Desktop, Claude Code, Cursor, Cline, Continue, or any MCP-compati
 | `vs_alerts_acknowledge` | `POST /api/alerts/{id}/acknowledge` | Acknowledge an alert |
 | `vs_status_pages_list` | `GET /api/status-pages` | List your public status pages |
 | `vs_servers_list` | `GET /api/servers` | List registered origin servers |
+
+## Prompts and resources
+
+Besides the 17 tools, the server offers four ready-made prompts and three read-only resources. None of them need an API key except the last prompt.
+
+| Prompt | What it does |
+|---|---|
+| `check_website_health` | Runs the website, SSL, DNS and speed checks on one site and summarises what needs attention. |
+| `investigate_broken_site` | Works through DNS, certificate, response and speed to find the layer at fault; reads incidents and alerts too when an API key is set. |
+| `pre_launch_checklist` | Pass, Warn or Fail checklist for a new or migrated domain. |
+| `triage_open_incidents` | Ranks open incidents and unacknowledged alerts (needs an API key). |
+
+| Resource | Contents |
+|---|---|
+| `visualsentinel://plans` | Plan limits, and which plans include API keys and the account tools. |
+| `visualsentinel://help` | Setup without an account, adding an API key, links. |
+| `visualsentinel://tools` | Every tool, whether it needs a key, and whether it changes data. |
+
+Without an API key the server still starts and lists everything. The five public tools work; each account tool returns a clear message that it needs an API key (Business and Agency plans) instead of failing.
 
 ## Installation
 
