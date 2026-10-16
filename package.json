@@ -1,7 +1,7 @@
 {
   "name": "@visualsentinel/mcp-server",
-  "version": "0.1.0",
-  "description": "Model Context Protocol server for Visual Sentinel: six-layer website monitoring (uptime, performance, SSL, DNS, visual regression, content change) accessible from Claude Desktop, Claude Code, Cline, Continue, and any MCP-compatible client.",
+  "version": "0.2.1",
+  "description": "Model Context Protocol server for Visual Sentinel website monitoring. Catches pages that look broken even when the site is up: uptime, performance, SSL, DNS, visual regression and content change, from Claude, Cursor, Cline, Continue and any MCP client. Five tools need no account; account tools need an API key (Business and Agency plans).",
   "type": "module",
   "bin": {
     "visualsentinel-mcp-server": "dist/index.js"
@@ -23,17 +23,20 @@
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [
-    "mcp",
-    "model-context-protocol",
-    "visual-sentinel",
-    "website-monitoring",
-    "uptime",
-    "ssl",
-    "dns",
-    "visual-regression",
+    "ai-agents",
     "claude",
     "claude-desktop",
-    "cline"
+    "cline",
+    "cursor",
+    "dns",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "ssl",
+    "uptime",
+    "visual-regression",
+    "visual-sentinel",
+    "website-monitoring"
   ],
   "author": "Visual Sentinel <support@visualsentinel.com>",
   "license": "MIT",
@@ -59,5 +62,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "mcpName": "io.github.VisualSentinel/mcp-server"
 }

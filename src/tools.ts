@@ -16,9 +16,20 @@ interface ToolInput {
   additionalProperties?: boolean;
 }
 
+export interface ToolAnnotations {
+  title: string;
+  readOnlyHint: boolean;
+  destructiveHint: boolean;
+  idempotentHint: boolean;
+  openWorldHint: boolean;
+}
+
 export interface ToolDefinition {
   name: string;
+  /** Human-readable title shown by MCP clients. */
+  title: string;
   description: string;
+  annotations: ToolAnnotations;
   inputSchema: ToolInput;
   requiresAuth: boolean;
   handler: (args: Record<string, unknown>, client: ApiClient) => Promise<unknown>;
@@ -51,6 +62,14 @@ export const TOOLS: ToolDefinition[] = [
   // -------------------------------------------------------------------------
   {
     name: 'vs_health',
+    title: 'Check Visual Sentinel service health',
+    annotations: {
+      title: 'Check Visual Sentinel service health',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
     description:
       'Check whether Visual Sentinel itself is up. Returns the service health status. No authentication required.',
     inputSchema: {
@@ -64,6 +83,14 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_dns_check',
+    title: 'Look up DNS records',
+    annotations: {
+      title: 'Look up DNS records',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
     description:
       'Resolve DNS records (A, AAAA, MX, NS, TXT, CNAME) for a domain using Visual Sentinel\'s public DNS lookup tool. No authentication required.',
     inputSchema: {
@@ -84,34 +111,51 @@ export const TOOLS: ToolDefinition[] = [
         auth: false,
         query: {
           domain: requireString(args, 'domain'),
-          recordType: pickString(args, 'recordType'),
+          // The API reads ?type= (not recordType).
+          type: pickString(args, 'recordType'),
         },
       }),
   },
 
   {
     name: 'vs_ssl_check',
+    title: 'Inspect an SSL certificate',
+    annotations: {
+      title: 'Inspect an SSL certificate',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
     description:
       'Inspect a TLS/SSL certificate for a hostname: issuer, subject, validity dates, SAN list, key algorithm, and certificate chain. No authentication required.',
     inputSchema: {
       type: 'object',
       properties: {
-        host: { ...STR, description: 'Hostname to inspect, e.g. example.com (without protocol).' },
-        port: { ...INT, description: 'TCP port. Default 443.' },
+        domain: { ...STR, description: 'Hostname to inspect, e.g. example.com (without protocol).' },
       },
-      required: ['host'],
+      required: ['domain'],
       additionalProperties: false,
     },
     requiresAuth: false,
     handler: async (args, client) =>
       client.request('GET', '/api/tools/ssl-check', {
         auth: false,
-        query: { host: requireString(args, 'host'), port: pickNumber(args, 'port') },
+        // The API reads ?domain=. `host` stays as an input alias for 0.1.x callers.
+        query: { domain: pickString(args, 'domain') ?? requireString(args, 'host') },
       }),
   },
 
   {
     name: 'vs_speed_test',
+    title: 'Run a one-shot speed test',
+    annotations: {
+      title: 'Run a one-shot speed test',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
     description:
       'Run a one-shot performance check against a URL: TTFB, total load time, transfer size, status code, and redirect chain. No authentication required.',
     inputSchema: {
@@ -132,6 +176,14 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_website_check',
+    title: 'Check a website',
+    annotations: {
+      title: 'Check a website',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
     description:
       'Quick health check for a URL: HTTP status, response time, server header, content snippet, and basic SSL state. No authentication required.',
     inputSchema: {
@@ -155,6 +207,14 @@ export const TOOLS: ToolDefinition[] = [
   // -------------------------------------------------------------------------
   {
     name: 'vs_monitors_list',
+    title: 'List monitors',
+    annotations: {
+      title: 'List monitors',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     description:
       'List monitors in the authenticated organization. Optional filters narrow by status, type, or paginate.',
     inputSchema: {
@@ -185,6 +245,14 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_monitors_get',
+    title: 'Get a monitor',
+    annotations: {
+      title: 'Get a monitor',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     description:
       'Fetch a single monitor by id, including its current status, last check, and configuration.',
     inputSchema: {
@@ -202,6 +270,14 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_monitors_create',
+    title: 'Create a monitor',
+    annotations: {
+      title: 'Create a monitor',
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: false,
+    },
     description:
       'Create a new monitor. Provide at least name, url, and type. Returns the created monitor including its assigned id.',
     inputSchema: {
@@ -241,6 +317,14 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_monitors_check_now',
+    title: 'Run a monitor check now',
+    annotations: {
+      title: 'Run a monitor check now',
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: false,
+    },
     description:
       'Trigger an immediate check for a monitor (in addition to its scheduled cadence). Returns the freshly-collected check result.',
     inputSchema: {
@@ -258,29 +342,137 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_monitors_uptime',
+    title: 'Get monitor uptime',
+    annotations: {
+      title: 'Get monitor uptime',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     description:
-      'Fetch the uptime percentage and outage breakdown for a monitor over a window (default last 30 days).',
+      'Fetch the uptime percentage and time-series breakdown for a monitor. Use `window` for a preset window (24h, 7d, 30d, 90d, 365d; default 30d), supply both `from` and `to` (ISO 8601) for a custom date range, or set `all: true` for the full available history.',
     inputSchema: {
       type: 'object',
       properties: {
         id: { ...STR, description: 'Monitor id.' },
         window: {
           ...STR,
-          description: 'Window: 24h, 7d, 30d, 90d, 365d. Default 30d.',
+          description: 'Preset window: 1h, 6h, 24h, 7d, 30d, 90d, 365d. Default 30d. Ignored when from+to or all are supplied.',
+        },
+        from: {
+          ...STR,
+          description: 'ISO 8601 start of a custom range (e.g. 2026-01-01T00:00:00Z). Must be supplied with `to`.',
+        },
+        to: {
+          ...STR,
+          description: 'ISO 8601 end of a custom range. Must be supplied with `from`.',
+        },
+        all: {
+          type: 'boolean',
+          description: 'Return the full available history from the earliest stored data. Takes precedence over from/to and window.',
         },
       },
       required: ['id'],
       additionalProperties: false,
     },
     requiresAuth: true,
-    handler: async (args, client) =>
-      client.request('GET', `/api/monitors/${encodeURIComponent(requireString(args, 'id'))}/uptime`, {
-        query: { window: pickString(args, 'window') },
-      }),
+    handler: async (args, client) => {
+      const from = pickString(args, 'from');
+      const to = pickString(args, 'to');
+      // Precedence mirrors the API: all > from/to > window/period.
+      const query = args['all'] === true
+        ? { all: true }
+        : (from && to)
+          ? { from, to }
+          : { period: pickString(args, 'window') ?? '30d' };
+      return client.request(
+        'GET',
+        `/api/monitors/${encodeURIComponent(requireString(args, 'id'))}/uptime`,
+        { query },
+      );
+    },
+  },
+
+  {
+    name: 'vs_monitors_metrics_bulk',
+    title: 'Get bulk monitor metrics',
+    annotations: {
+      title: 'Get bulk monitor metrics',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+    description:
+      'Fetch uptime or response-time metrics for up to 100 monitors in a single request. Use `window` for a preset window (1h, 6h, 24h, 7d, 30d, 90d, 365d; default 30d), supply both `from` and `to` (ISO 8601) for a custom date range, or set `all: true` for the full available history. Returns a `monitors` object keyed by monitor id.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        monitorIds: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'List of monitor IDs to fetch metrics for (max 100).',
+        },
+        metric: {
+          ...STR,
+          description: 'Metric to return: "uptime" or "response-time".',
+        },
+        window: {
+          ...STR,
+          description: 'Preset window: 1h, 6h, 24h, 7d, 30d, 90d, 365d. Default 30d. Ignored when from+to or all are supplied.',
+        },
+        from: {
+          ...STR,
+          description: 'ISO 8601 start of a custom range (e.g. 2026-01-01T00:00:00Z). Must be supplied with `to`.',
+        },
+        to: {
+          ...STR,
+          description: 'ISO 8601 end of a custom range. Must be supplied with `from`.',
+        },
+        all: {
+          type: 'boolean',
+          description: 'Return the full available history from the earliest stored data. Takes precedence over from/to and window.',
+        },
+      },
+      required: ['monitorIds', 'metric'],
+      additionalProperties: false,
+    },
+    requiresAuth: true,
+    handler: async (args, client) => {
+      const monitorIds = args['monitorIds'];
+      if (!Array.isArray(monitorIds) || monitorIds.length === 0) {
+        throw new Error('Argument "monitorIds" must be a non-empty array.');
+      }
+      const from = pickString(args, 'from');
+      const to = pickString(args, 'to');
+      const body: Record<string, unknown> = {
+        monitorIds,
+        metric: requireString(args, 'metric'),
+      };
+      // Precedence mirrors the API: all > from/to > window/period.
+      if (args['all'] === true) {
+        body['all'] = true;
+      } else if (from && to) {
+        body['from'] = from;
+        body['to'] = to;
+      } else {
+        body['period'] = pickString(args, 'window') ?? '30d';
+      }
+      return client.request('POST', '/api/monitors/metrics', { body });
+    },
   },
 
   {
     name: 'vs_incidents_list',
+    title: 'List incidents',
+    annotations: {
+      title: 'List incidents',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     description:
       'List incidents for the authenticated organization. Filter by status (OPEN/RESOLVED), monitor id, or paginate.',
     inputSchema: {
@@ -307,6 +499,14 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_incidents_get',
+    title: 'Get an incident',
+    annotations: {
+      title: 'Get an incident',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     description: 'Fetch a single incident with its full check history and root-cause hints.',
     inputSchema: {
       type: 'object',
@@ -323,6 +523,14 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_alerts_list',
+    title: 'List alerts',
+    annotations: {
+      title: 'List alerts',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     description:
       'List alerts for the authenticated organization. Filter by status (UNACKNOWLEDGED/ACKNOWLEDGED/RESOLVED) or paginate.',
     inputSchema: {
@@ -347,6 +555,14 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_alerts_acknowledge',
+    title: 'Acknowledge an alert',
+    annotations: {
+      title: 'Acknowledge an alert',
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     description: 'Acknowledge an alert by id. Acknowledgement is recorded with the calling API key\'s user.',
     inputSchema: {
       type: 'object',
@@ -366,6 +582,14 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_status_pages_list',
+    title: 'List status pages',
+    annotations: {
+      title: 'List status pages',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     description: 'List public-facing status pages owned by the authenticated organization.',
     inputSchema: {
       type: 'object',
@@ -378,6 +602,14 @@ export const TOOLS: ToolDefinition[] = [
 
   {
     name: 'vs_servers_list',
+    title: 'List servers',
+    annotations: {
+      title: 'List servers',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
     description: 'List servers (origins) registered in the authenticated organization.',
     inputSchema: {
       type: 'object',
