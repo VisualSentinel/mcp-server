@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "visualsentinel": {
+      "command": "npx",
+      "args": ["-y", "@visualsentinel/mcp-server"],
+      "env": {
+        "VS_API_KEY": "${VS_API_KEY}"
+      }
+    }
+  }
+}

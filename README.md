@@ -72,7 +72,7 @@ Then export `VS_API_KEY` in the shell where Claude Code runs.
 
 ### Cursor and Grok Bot
 
-This repository is also a plugin for the Cursor Marketplace (`.cursor-plugin/plugin.json` and `mcp.json`), which Grok Bot reads. Or add the server by hand to `~/.cursor/mcp.json`:
+This repository is also an installable plugin: `.cursor-plugin/plugin.json` and `mcp.json` for the Cursor Marketplace, and `.claude-plugin/plugin.json` and `.mcp.json` for Grok and Claude Code (`grok plugin install VisualSentinel/mcp-server`). Or add the server by hand to `~/.cursor/mcp.json`:
 
 ```json
 {
