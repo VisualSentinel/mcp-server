@@ -14,7 +14,7 @@ All notable changes to `@visualsentinel/mcp-server`. Format follows [Keep a Chan
 
 * Every tool has a `title` and the MCP annotations `readOnlyHint`, `destructiveHint`, `idempotentHint` and `openWorldHint`, as AI directories require.
 * `mcpName` (`io.github.VisualSentinel/mcp-server`) and `server.json` for the official MCP Registry.
-* `.cursor-plugin/plugin.json`, `.claude-plugin/plugin.json`, `.mcp.json` and `mcp.json` for the Cursor Marketplace and Grok Bot, and `llms-install.md` for Cline.
+* `.cursor-plugin/plugin.json`, `.claude-plugin/plugin.json`, `.mcp.json` and `mcp.json` for the Cursor Marketplace and Grok Bot, `llms-install.md` for Cline, a `Dockerfile` for the Docker MCP Catalog and Glama, and `gemini-extension.json`.
 
 ## [0.2.0] - 2026-06-04
 
