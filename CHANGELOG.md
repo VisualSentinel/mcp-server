@@ -2,6 +2,20 @@
 
 All notable changes to `@visualsentinel/mcp-server`. Format follows [Keep a Changelog](https://keepachangelog.com/) and the package uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-10-16
+
+### Fixed
+
+* `vs_ssl_check` sent `?host=` but the API reads `?domain=`, so every call returned a 400. The tool now takes `domain` (`host` still works as an alias). The unsupported `port` input is removed.
+* `vs_dns_check` sent `recordType`, which the API ignored. It now sends `type`, so the record-type filter works.
+* The server now reports its real version in the MCP handshake instead of a fixed `0.1.0`.
+
+### Added
+
+* Every tool has a `title` and the MCP annotations `readOnlyHint`, `destructiveHint`, `idempotentHint` and `openWorldHint`, as AI directories require.
+* `mcpName` (`io.github.VisualSentinel/mcp-server`) and `server.json` for the official MCP Registry.
+* `.cursor-plugin/plugin.json` and `mcp.json` for the Cursor Marketplace and Grok Bot, and `llms-install.md` for Cline.
+
 ## [0.2.0] - 2026-06-04
 
 ### Added

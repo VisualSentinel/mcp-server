@@ -176,3 +176,50 @@ describe('vs_monitors_metrics_bulk', () => {
     assert.equal(options.body?.from, undefined, 'from must not be set when all=true');
   });
 });
+
+describe('public tool query parameters match the API', () => {
+  it('vs_ssl_check sends ?domain= (the API ignores ?host=)', async () => {
+    const tool = getTool('vs_ssl_check');
+    const client = new MockClient();
+    await tool.handler({ domain: 'example.com' }, client);
+    assert.equal(client.calls[0].path, '/api/tools/ssl-check');
+    assert.equal(client.calls[0].options.query?.domain, 'example.com');
+    assert.equal(client.calls[0].options.query?.host, undefined);
+  });
+
+  it('vs_ssl_check still accepts host as an alias', async () => {
+    const tool = getTool('vs_ssl_check');
+    const client = new MockClient();
+    await tool.handler({ host: 'example.com' }, client);
+    assert.equal(client.calls[0].options.query?.domain, 'example.com');
+  });
+
+  it('vs_dns_check sends ?type= for the record type', async () => {
+    const tool = getTool('vs_dns_check');
+    const client = new MockClient();
+    await tool.handler({ domain: 'example.com', recordType: 'MX' }, client);
+    assert.equal(client.calls[0].options.query?.type, 'MX');
+    assert.equal(client.calls[0].options.query?.recordType, undefined);
+  });
+});
+
+describe('tool annotations', () => {
+  it('every tool has a title and all four hints as booleans', () => {
+    for (const t of TOOLS) {
+      assert.ok(t.title && t.title.length > 0, `${t.name} needs a title`);
+      for (const h of ['readOnlyHint', 'destructiveHint', 'idempotentHint', 'openWorldHint']) {
+        assert.equal(typeof t.annotations[h], 'boolean', `${t.name}.${h}`);
+      }
+    }
+  });
+
+  it('write tools are not marked read-only', () => {
+    for (const n of ['vs_monitors_create', 'vs_monitors_check_now', 'vs_alerts_acknowledge']) {
+      assert.equal(getTool(n).annotations.readOnlyHint, false, n);
+    }
+  });
+
+  it('tool names stay within 64 characters', () => {
+    for (const t of TOOLS) assert.ok(t.name.length <= 64, t.name);
+  });
+});

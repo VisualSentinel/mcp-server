@@ -1,0 +1,28 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.VisualSentinel/mcp-server",
+  "title": "Visual Sentinel",
+  "description": "Website monitoring for AI assistants. Visual Sentinel catches pages that look broken even when the site is up. Five tools (DNS, SSL, speed, website check, service health) need no account; eleven account tools need an API key (Business and Agency plans).",
+  "websiteUrl": "https://visualsentinel.com/mcp",
+  "repository": {
+    "url": "https://github.com/VisualSentinel/mcp-server",
+    "source": "github"
+  },
+  "version": "0.2.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@visualsentinel/mcp-server",
+      "version": "0.2.1",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        {
+          "name": "VS_API_KEY",
+          "description": "Visual Sentinel API key for the eleven account tools (Business and Agency plans). Create one at https://visualsentinel.com/settings/api-keys. The five public tools work without it.",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

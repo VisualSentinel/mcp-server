@@ -1,0 +1,34 @@
+{
+  "name": "visual-sentinel",
+  "displayName": "Visual Sentinel",
+  "version": "0.2.1",
+  "description": "Website monitoring from your AI assistant. Visual Sentinel catches pages that look broken even when the site is up. Five tools work with no account (DNS lookup, SSL certificate inspection, speed test, website check, service health); eleven account tools need a Visual Sentinel API key on the Business or Agency plan.",
+  "author": {
+    "name": "Visual Sentinel",
+    "email": "support@acefina.com"
+  },
+  "homepage": "https://visualsentinel.com/mcp",
+  "repository": "https://github.com/VisualSentinel/mcp-server",
+  "license": "MIT",
+  "keywords": [
+    "monitoring",
+    "uptime",
+    "ssl",
+    "dns",
+    "visual-regression",
+    "website-monitoring",
+    "incidents",
+    "alerts"
+  ],
+  "logo": "assets/logo.png",
+  "variables": {
+    "type": "object",
+    "properties": {
+      "VS_API_KEY": {
+        "type": "string",
+        "title": "Visual Sentinel API key (optional)",
+        "description": "Only needed for the eleven account tools (Business and Agency plans). Create one at https://visualsentinel.com/settings/api-keys. The five public tools work without it."
+      }
+    }
+  }
+}

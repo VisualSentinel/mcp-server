@@ -21,12 +21,14 @@ import { ApiClient, VsApiError } from './api-client.js';
 import { TOOLS, findTool } from './tools.js';
 
 const SERVER_NAME = 'visualsentinel';
-const SERVER_VERSION = '0.1.0';
+const SERVER_VERSION = '0.2.1';
 
 function toMcpToolDescriptor(tool: (typeof TOOLS)[number]) {
   return {
     name: tool.name,
+    title: tool.title,
     description: tool.description,
+    annotations: tool.annotations,
     inputSchema: tool.inputSchema,
   };
 }

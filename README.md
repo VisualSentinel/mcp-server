@@ -1,12 +1,12 @@
 # Visual Sentinel MCP Server
 
-Model Context Protocol server for [Visual Sentinel](https://visualsentinel.com), the six-layer website monitoring platform: uptime, performance, SSL, DNS, visual regression, and content change detection.
+Model Context Protocol server for [Visual Sentinel](https://visualsentinel.com). Visual Sentinel catches pages that look broken even when the site is up. It monitors six layers: uptime, performance, SSL, DNS, visual regression, and content change.
 
-Connect Claude Desktop, Claude Code, Cline, Continue, or any MCP-compatible client to your Visual Sentinel account so an AI assistant can list monitors, create them, fetch incident history, run free DNS / SSL / speed checks, and acknowledge alerts on your behalf.
+Connect Claude Desktop, Claude Code, Cursor, Cline, Continue, or any MCP-compatible client so an AI assistant can run DNS, SSL and speed checks on any site with no account. With a Visual Sentinel account and an API key (Business and Agency plans) it can also list and create monitors, fetch incident history, and acknowledge alerts on your behalf.
 
 * **npm:** `@visualsentinel/mcp-server`
 * **OpenAPI spec:** https://github.com/VisualSentinel/openapi
-* **Get an API key:** https://visualsentinel.com/settings/api-keys
+* **API key (Business and Agency plans):** https://visualsentinel.com/settings/api-keys
 * **Hosted API reference:** https://visualsentinel.com/docs
 
 ## What you get
@@ -70,6 +70,21 @@ claude mcp add visualsentinel \
 
 Then export `VS_API_KEY` in the shell where Claude Code runs.
 
+### Cursor and Grok Bot
+
+This repository is also a plugin for the Cursor Marketplace (`.cursor-plugin/plugin.json` and `mcp.json`), which Grok Bot reads. Or add the server by hand to `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "visualsentinel": {
+      "command": "npx",
+      "args": ["-y", "@visualsentinel/mcp-server"]
+    }
+  }
+}
+```
+
 ### Cline (VS Code extension)
 
 In Cline's MCP settings, add:
@@ -115,7 +130,7 @@ Two environment variables, both optional except in the noted cases:
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `VS_API_KEY` | (none) | Required for the 11 authenticated tools. Public tools work without it. Generate at https://visualsentinel.com/settings/api-keys. |
+| `VS_API_KEY` | (none) | Required for the 11 authenticated tools (API keys are available on the Business and Agency plans). Public tools work without it. Generate at https://visualsentinel.com/settings/api-keys. |
 | `VS_API_BASE` | `https://visualsentinel.com` | Override only for testing against a local development instance. |
 
 If a tool that needs auth is called without `VS_API_KEY`, the server returns a clear error rather than silently failing.
