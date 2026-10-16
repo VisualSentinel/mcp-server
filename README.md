@@ -11,7 +11,7 @@ Connect Claude Desktop, Claude Code, Cursor, Cline, Continue, or any MCP-compati
 
 ## What you get
 
-16 tools spanning the public Visual Sentinel API:
+17 tools spanning the public Visual Sentinel API:
 
 **Public tools (no API key required)**
 
@@ -31,7 +31,8 @@ Connect Claude Desktop, Claude Code, Cursor, Cline, Continue, or any MCP-compati
 | `vs_monitors_get` | `GET /api/monitors/{id}` | Fetch a single monitor with current status |
 | `vs_monitors_create` | `POST /api/monitors` | Create a new monitor |
 | `vs_monitors_check_now` | `POST /api/monitors/{id}/check` | Trigger an immediate check |
-| `vs_monitors_uptime` | `GET /api/monitors/{id}/uptime` | Uptime percentage over 24h / 7d / 30d / 90d / 365d |
+| `vs_monitors_uptime` | `GET /api/monitors/{id}/uptime` | Uptime percentage for a preset window, a custom date range, or the full history |
+| `vs_monitors_metrics_bulk` | `POST /api/monitors/metrics` | Uptime or response-time metrics for up to 100 monitors in one call |
 | `vs_incidents_list` | `GET /api/incidents` | List incidents, filterable by status or monitor |
 | `vs_incidents_get` | `GET /api/incidents/{id}` | Fetch an incident with full check history |
 | `vs_alerts_list` | `GET /api/alerts` | List alerts by status |
@@ -59,7 +60,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 }
 ```
 
-Restart Claude Desktop. The 16 tools appear under the tools menu.
+Restart Claude Desktop. The 17 tools appear under the tools menu.
 
 ### Claude Code (CLI)
 
@@ -130,7 +131,7 @@ Two environment variables, both optional except in the noted cases:
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `VS_API_KEY` | (none) | Required for the 11 authenticated tools (API keys are available on the Business and Agency plans). Public tools work without it. Generate at https://visualsentinel.com/settings/api-keys. |
+| `VS_API_KEY` | (none) | Required for the 12 authenticated tools (API keys are available on the Business and Agency plans). Public tools work without it. Generate at https://visualsentinel.com/settings/api-keys. |
 | `VS_API_BASE` | `https://visualsentinel.com` | Override only for testing against a local development instance. |
 
 If a tool that needs auth is called without `VS_API_KEY`, the server returns a clear error rather than silently failing.
