@@ -17,7 +17,7 @@ Visual Sentinel is a website monitoring service. This MCP server runs locally ov
 
 2. Five tools work immediately with no account: `vs_health`, `vs_dns_check`, `vs_ssl_check`, `vs_speed_test`, `vs_website_check`.
 
-3. Eleven account tools (monitors, uptime, incidents, alerts, status pages, servers) need a Visual Sentinel API key. API keys are available on the Business and Agency plans. Ask the user for the key, then add it to the server entry:
+3. Twelve account tools (monitors, uptime, incidents, alerts, status pages, servers) need a Visual Sentinel API key. API keys are available on the Business and Agency plans. Ask the user for the key, then add it to the server entry:
 
 ```json
 "env": { "VS_API_KEY": "<the user's API key>" }
