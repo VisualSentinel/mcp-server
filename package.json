@@ -63,5 +63,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "mcpName": "io.github.VisualSentinel/mcp-server"
+  "mcpName": "com.visualsentinel/mcp-server"
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.VisualSentinel/mcp-server",
+  "name": "com.visualsentinel/mcp-server",
   "title": "Visual Sentinel",
   "description": "Website monitoring for AI assistants: catches pages that look broken even when the site is up.",
   "websiteUrl": "https://visualsentinel.com/mcp",

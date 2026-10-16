@@ -9,6 +9,7 @@ All notable changes to `@visualsentinel/mcp-server`. Format follows [Keep a Chan
 * Four MCP prompts: `check_website_health`, `investigate_broken_site`, `pre_launch_checklist`, `triage_open_incidents`.
 * Three read-only MCP resources: `visualsentinel://plans`, `visualsentinel://help`, `visualsentinel://tools`. The server now advertises the `prompts` and `resources` capabilities.
 * LobeHub badge and homepage link in the README (the LobeHub claim route).
+* `mcpName` is now `com.visualsentinel/mcp-server` (the registry namespace is verified through a DNS record on visualsentinel.com).
 
 ### Changed
 
