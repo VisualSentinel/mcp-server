@@ -26,5 +26,11 @@
         }
       ]
     }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://visualsentinel.com/api/mcp"
+    }
   ]
 }
