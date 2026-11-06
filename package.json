@@ -40,7 +40,7 @@
   ],
   "author": "Visual Sentinel <support@visualsentinel.com>",
   "license": "MIT",
-  "homepage": "https://github.com/VisualSentinel/mcp-server#readme",
+  "homepage": "https://visualsentinel.com/mcp",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VisualSentinel/mcp-server.git"

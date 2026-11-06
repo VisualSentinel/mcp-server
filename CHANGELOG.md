@@ -2,7 +2,7 @@
 
 All notable changes to `@visualsentinel/mcp-server`. Format follows [Keep a Changelog](https://keepachangelog.com/) and the package uses [Semantic Versioning](https://semver.org/).
 
-## [0.2.2] - 2026-10-16
+## [0.2.2] - 2026-11-06
 
 ### Added
 
@@ -13,6 +13,7 @@ All notable changes to `@visualsentinel/mcp-server`. Format follows [Keep a Chan
 
 ### Changed
 
+* `package.json` `homepage` is now https://visualsentinel.com/mcp, so npm and its mirrors link to the product page instead of this repository.
 * Account tools called without an API key now explain that API keys are available on the Business and Agency plans and that the five public tools work without one.
 * `SERVER_VERSION` lives in `src/version.ts`; a test keeps it equal to `package.json`.
 
