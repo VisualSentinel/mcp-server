@@ -4,6 +4,8 @@
  * call and how to report back. They work without an API key unless noted.
  */
 
+import { API_KEY_PLANS, API_KEY_PLANS_SHORT } from './plan-copy.js';
+
 export interface PromptArgument {
   name: string;
   description: string;
@@ -106,7 +108,7 @@ export const PROMPTS: PromptDefinition[] = [
     name: 'triage_open_incidents',
     title: 'Triage open incidents',
     description:
-      'Review open incidents and unacknowledged alerts on your account and rank what to look at first. Needs a Visual Sentinel API key (Business and Agency plans).',
+      `Review open incidents and unacknowledged alerts on your account and rank what to look at first. Needs a Visual Sentinel API key (${API_KEY_PLANS_SHORT}).`,
     arguments: [],
     build: () =>
       [
@@ -116,7 +118,7 @@ export const PROMPTS: PromptDefinition[] = [
         '2. vs_alerts_list with status UNACKNOWLEDGED.',
         '3. For each affected monitor, vs_monitors_get and vs_monitors_uptime for the last 24 hours.',
         '',
-        'Rank the incidents by customer impact (production sites and checkout pages before staging), group alerts that belong to the same incident, and give one suggested next step for each. If the tools return an "API key required" error, tell me that account tools need an API key from the Business or Agency plan, and stop. Ask before acknowledging any alert.',
+        `Rank the incidents by customer impact (production sites and checkout pages before staging), group alerts that belong to the same incident, and give one suggested next step for each. If the tools return an "API key required" error, tell me that account tools need an API key, which comes with ${API_KEY_PLANS}, and stop. Ask before acknowledging any alert.`,
       ].join('\n'),
   },
 ];

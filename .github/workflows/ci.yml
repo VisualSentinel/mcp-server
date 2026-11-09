@@ -22,6 +22,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
+      - run: npm test
       - name: Smoke test (initialize + tools/list)
         run: |
           (echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"0.1"}}}'; sleep 0.3; echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'; sleep 0.5) | node dist/index.js | head -2 | grep -q '"name":"vs_health"'

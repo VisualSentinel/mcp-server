@@ -8,19 +8,19 @@
     "url": "https://github.com/VisualSentinel/mcp-server",
     "source": "github"
   },
-  "version": "0.2.2",
+  "version": "0.2.3",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@visualsentinel/mcp-server",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "transport": {
         "type": "stdio"
       },
       "environmentVariables": [
         {
           "name": "VS_API_KEY",
-          "description": "Visual Sentinel API key for the twelve account tools (Business and Agency plans). Create one at https://visualsentinel.com/settings/api-keys. The five public tools work without it.",
+          "description": "Visual Sentinel API key for the twelve account tools (every paid plan, including the 10-day free trial). Create one at https://visualsentinel.com/settings/api-keys. The five public tools work without it.",
           "isRequired": false,
           "isSecret": true
         }

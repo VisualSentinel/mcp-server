@@ -228,6 +228,7 @@ describe('prompts, resources and version', async () => {
   const { PROMPTS, findPrompt } = await import('../dist/prompts.js');
   const { RESOURCES, findResource } = await import('../dist/resources.js');
   const { SERVER_VERSION } = await import('../dist/version.js');
+  const { API_KEY_PLANS, MONEY_BACK_SENTENCE, NO_FREE_PLAN_SENTENCE } = await import('../dist/plan-copy.js');
   const { readFileSync } = await import('node:fs');
   const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
@@ -258,12 +259,73 @@ describe('prompts, resources and version', async () => {
 
   it('resources read as non-empty markdown and stay inside the fact sheet', () => {
     assert.equal(RESOURCES.length, 3);
+    // The only Free-plan and guarantee statements allowed are these facts.
+    const allowed = [
+      NO_FREE_PLAN_SENTENCE,
+      MONEY_BACK_SENTENCE,
+      'Workspaces that already had the Free plan keep it.',
+      'The older Free plan has no API keys.',
+    ];
     for (const r of RESOURCES) {
-      const body = findResource(r.uri).read();
+      let body = findResource(r.uri).read();
       assert.ok(body.length > 100, r.uri);
-      assert.ok(!/free plan|free tier|99\.\d|instantly|never miss|guarantee/i.test(body.replace('There is no free plan for new accounts', '')), r.uri);
+      for (const sentence of allowed) body = body.replace(sentence, '');
+      assert.ok(!/free plan|free tier|99\.\d|instantly|never miss|guarantee/i.test(body), r.uri);
     }
     assert.ok(findResource('visualsentinel://tools').read().includes('vs_ssl_check'));
+  });
+
+  it('the plans resource states the current offer (2026-11-09)', () => {
+    const plans = findResource('visualsentinel://plans').read();
+    assert.ok(plans.includes('(as of 2026-11-09)'));
+    for (const fact of [
+      NO_FREE_PLAN_SENTENCE,
+      'a free first check of its site, then a 10-day free trial of a paid plan or an immediate subscription',
+      'No card is needed for the trial with a work email.',
+      'With a personal email address, you add a card ($0 today, billed on day 11 unless you cancel).',
+      'When a trial without a card ends, monitoring pauses until you subscribe',
+      'One trial per customer.',
+      MONEY_BACK_SENTENCE,
+      `API keys come with ${API_KEY_PLANS}.`,
+    ]) assert.ok(plans.includes(fact), fact);
+    const rows = {
+      Solo: '| Solo | $15 a month or $150 a year | 10 | every 5 minutes | 1 site, up to 4 pages, every 30 minutes | 1 | yes |',
+      Starter: '| Starter | $30 a month or $300 a year | 15 | every 5 minutes | 5 sites, up to 6 pages each, every 15 minutes | 1 | yes |',
+      Business: '| Business | $80 a month or $800 a year | 60 | every minute | 60 sites, up to 6 pages each, every 15 minutes | 5 | yes |',
+      Agency: '| Agency | $300 a month or $3,000 a year | 300 | every minute | 300 sites, up to 6 pages each, every 15 minutes | 50 | yes |',
+    };
+    for (const [plan, row] of Object.entries(rows)) assert.ok(plans.includes(row), plan);
+  });
+
+  it('no shipped text carries the old offer', () => {
+    const texts = [
+      ...RESOURCES.map((r) => findResource(r.uri).read()),
+      ...PROMPTS.map((p) => {
+        const args = {};
+        for (const a of p.arguments) args[a.name] = 'example.com';
+        return `${p.description}\n${p.build(args)}`;
+      }),
+    ];
+    const files = ['package.json', 'server.json', 'README.md', 'llms-install.md', 'gemini-extension.json', '.claude-plugin/plugin.json', '.cursor-plugin/plugin.json'];
+    for (const f of files) texts.push(readFileSync(new URL(`../${f}`, import.meta.url), 'utf8'));
+    const stale = /7-day|card required|(?<!Starter, )Business (and|or) Agency|\$6\b|\$12\b|\$39\b|\$149\b|14-day|\u2014/i;
+    for (const t of texts) assert.ok(!stale.test(t), t.match(stale)?.[0]);
+  });
+
+  it('the npm description fits the registry search field (255 characters)', () => {
+    assert.ok(pkg.description.length <= 255, String(pkg.description.length));
+    assert.ok(pkg.description.includes('every paid plan'));
+  });
+
+  it('every manifest carries the package version', () => {
+    const read = (f) => JSON.parse(readFileSync(new URL(`../${f}`, import.meta.url), 'utf8'));
+    const lock = read('package-lock.json');
+    const server = read('server.json');
+    assert.equal(lock.version, pkg.version);
+    assert.equal(lock.packages[''].version, pkg.version);
+    assert.equal(server.version, pkg.version);
+    for (const p of server.packages) assert.equal(p.version, pkg.version);
+    for (const f of ['gemini-extension.json', '.claude-plugin/plugin.json', '.cursor-plugin/plugin.json']) assert.equal(read(f).version, pkg.version, f);
   });
 
   it('account tools return a clear no-key error, not a crash', async () => {
@@ -272,7 +334,7 @@ describe('prompts, resources and version', async () => {
     delete process.env.VS_API_KEY; delete process.env.VISUALSENTINEL_API_KEY;
     const c2 = new ApiClient();
     const tool = TOOLS.find((t) => t.name === 'vs_monitors_list');
-    await assert.rejects(() => tool.handler({}, c2), /Business and Agency/);
+    await assert.rejects(() => tool.handler({}, c2), (err) => err.message.includes(`API keys come with ${API_KEY_PLANS}.`) && !/(?<!Starter, )Business (and|or) Agency/.test(err.message));
     void client;
   });
 });

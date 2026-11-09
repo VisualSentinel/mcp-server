@@ -2,6 +2,18 @@
 
 All notable changes to `@visualsentinel/mcp-server`. Format follows [Keep a Changelog](https://keepachangelog.com/) and the package uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.3] - 2026-11-09
+
+### Fixed
+
+* API keys and the account tools come with every paid plan (Solo, Starter, Business and Agency), including during the 10-day free trial. The no-key error, the `triage_open_incidents` prompt, the `visualsentinel://help` and `visualsentinel://tools` resources, the README, `llms-install.md`, the `package.json` description, the `server.json` `VS_API_KEY` description and the Gemini, Claude Code and Cursor plugin manifests said Business and Agency only.
+* `visualsentinel://plans` (as of 2026-11-09) now states the current offer: no Free plan for website sign-ups, a free first check of the site, then a 10-day free trial (no card needed with a work email; with a personal email address, a card, $0 today, billed on day 11 unless cancelled) or an immediate subscription, one trial per customer, and the 30-day money-back guarantee. It said 7-day trial, card required. The table adds monthly and yearly prices, gives screenshot checks as sites and pages per site, marks Solo and Starter as having API keys, and lists Asia Pacific among the check regions.
+* The `package.json` description fits the 255 characters registry search shows, so the API key sentence is no longer cut off.
+
+### Changed
+
+* The plan wording lives in `src/plan-copy.ts`, shared by the resources, the prompts and the no-key error. Tests pin the offer sentences, the plan table, the description length and the version in every manifest.
+
 ## [0.2.2] - 2026-11-06
 
 ### Added

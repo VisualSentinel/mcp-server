@@ -7,6 +7,8 @@
  * dev instance).
  */
 
+import { API_KEY_PLANS } from './plan-copy.js';
+
 const DEFAULT_BASE = 'https://visualsentinel.com';
 
 export interface ApiClientOptions {
@@ -56,7 +58,7 @@ export class ApiClient {
     const auth = options.auth ?? true;
     if (auth && !this.hasApiKey()) {
       throw new VsApiError(
-        'This tool needs a Visual Sentinel API key, which is available on the Business and Agency plans. Create one at https://visualsentinel.com/settings/api-keys and set it as VS_API_KEY. The DNS, SSL, speed, website-check and health tools work without a key.',
+        `This tool needs a Visual Sentinel API key. API keys come with ${API_KEY_PLANS}. Create one at https://visualsentinel.com/settings/api-keys and set it as VS_API_KEY. The DNS, SSL, speed, website-check and health tools work without a key.`,
         401,
         null,
       );
