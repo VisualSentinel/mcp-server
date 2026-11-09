@@ -35,8 +35,8 @@ Prices are in US dollars before tax. Yearly costs 10 months of monthly.
 - A site with screenshot checks is the URL you add plus the extra pages your plan includes. It also gets uptime checks and counts toward the monitor total. Content checks start on Starter.
 - The five public tools (vs_health, vs_dns_check, vs_ssl_check, vs_speed_test, vs_website_check) need no account.
 - The twelve account tools need an API key. API keys come with ${API_KEY_PLANS}. Create one at https://visualsentinel.com/settings/api-keys.
-- The older Free plan has no API keys. Keys also stop working while monitoring is paused, for example after a trial without a card ends, and work again once a paid plan is active.
-- Checks run from the regions a monitor picks: Europe, the US and Asia Pacific. Alert channels on every paid plan: email, Slack, Discord, Microsoft Teams, Telegram, PagerDuty, Opsgenie, webhooks, WhatsApp, Prometheus, and push notifications in the mobile app.
+- The older Free plan has no API keys. Keys also stop working while the workspace has no active plan or trial (for example after a trial without a card ends, or while a subscription is paused) and work again once a paid plan is active.
+- Checks run from Europe and the US, plus Asia Pacific on every paid plan. Alert channels on every paid plan: email, Slack, Discord, Microsoft Teams, Telegram, PagerDuty, Opsgenie, webhooks, WhatsApp, Prometheus, and push notifications in the mobile app.
 `;
 
 const HELP = `# Using the Visual Sentinel MCP server
