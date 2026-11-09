@@ -4,12 +4,12 @@
 
 Model Context Protocol server for [Visual Sentinel](https://visualsentinel.com). Visual Sentinel catches pages that look broken even when the site is up. It monitors six layers: uptime, performance, SSL, DNS, visual regression, and content change.
 
-Connect Claude Desktop, Claude Code, Cursor, Cline, Continue, or any MCP-compatible client so an AI assistant can run DNS, SSL and speed checks on any site with no account. With a Visual Sentinel account and an API key (Business and Agency plans) it can also list and create monitors, fetch incident history, and acknowledge alerts on your behalf.
+Connect Claude Desktop, Claude Code, Cursor, Cline, Continue, or any MCP-compatible client so an AI assistant can run DNS, SSL and speed checks on any site with no account. With a Visual Sentinel account and an API key (every paid plan, including the 10-day free trial) it can also list and create monitors, fetch incident history, and acknowledge alerts on your behalf.
 
 * **Homepage and docs:** https://visualsentinel.com/mcp
 * **npm:** `@visualsentinel/mcp-server`
 * **OpenAPI spec:** https://github.com/VisualSentinel/openapi
-* **API key (Business and Agency plans):** https://visualsentinel.com/settings/api-keys
+* **API key (every paid plan, including the 10-day free trial):** https://visualsentinel.com/settings/api-keys
 * **Hosted API reference:** https://visualsentinel.com/docs
 
 ## What you get
@@ -56,11 +56,11 @@ Besides the 17 tools, the server offers four ready-made prompts and three read-o
 
 | Resource | Contents |
 |---|---|
-| `visualsentinel://plans` | Plan limits, and which plans include API keys and the account tools. |
+| `visualsentinel://plans` | Prices, plan limits, the trial terms, and which plans include API keys and the account tools. |
 | `visualsentinel://help` | Setup without an account, adding an API key, links. |
 | `visualsentinel://tools` | Every tool, whether it needs a key, and whether it changes data. |
 
-Without an API key the server still starts and lists everything. The five public tools work; each account tool returns a clear message that it needs an API key (Business and Agency plans) instead of failing.
+Without an API key the server still starts and lists everything. The five public tools work; each account tool returns a clear message that it needs an API key (every paid plan, including the 10-day free trial) instead of failing.
 
 ## Installation
 
@@ -162,7 +162,7 @@ Two environment variables, both optional except in the noted cases:
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `VS_API_KEY` | (none) | Required for the 12 authenticated tools (API keys are available on the Business and Agency plans). Public tools work without it. Generate at https://visualsentinel.com/settings/api-keys. |
+| `VS_API_KEY` | (none) | Required for the 12 authenticated tools (API keys come with every paid plan, including during the 10-day free trial). Public tools work without it. Generate at https://visualsentinel.com/settings/api-keys. |
 | `VS_API_BASE` | `https://visualsentinel.com` | Override only for testing against a local development instance. |
 
 If a tool that needs auth is called without `VS_API_KEY`, the server returns a clear error rather than silently failing.

@@ -1,7 +1,7 @@
 {
   "name": "@visualsentinel/mcp-server",
-  "version": "0.2.2",
-  "description": "Model Context Protocol server for Visual Sentinel website monitoring. Catches pages that look broken even when the site is up: uptime, performance, SSL, DNS, visual regression and content change, from Claude, Cursor, Cline, Continue and any MCP client. Five tools need no account; account tools need an API key (Business and Agency plans).",
+  "version": "0.2.3",
+  "description": "MCP server for Visual Sentinel website monitoring: catches pages that look broken even when the site is up. Uptime, speed, SSL, DNS, visual and content checks. Five tools need no account; account tools need an API key (every paid plan, trial included).",
   "type": "module",
   "bin": {
     "visualsentinel-mcp-server": "dist/index.js"
